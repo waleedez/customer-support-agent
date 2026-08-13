@@ -176,3 +176,14 @@ Encrypt can't issue a browser-trusted cert for a bare IP).
 Note: this repo's Docker/Compose tooling only runs where you invoke it -
 setting this up on a remote host means copying these files there and running
 `docker compose` on that machine.
+
+### Surviving a reboot
+
+All four services (`langgraph-redis`, `langgraph-postgres`, `langgraph-api`,
+`reverse-proxy`) are set to `restart: unless-stopped` in
+`docker-compose.override.yml` - verified by killing the in-container process
+directly (not `docker stop`/`docker kill`, which Docker treats as
+intentional and won't auto-restart from) and confirming Docker relaunched it
+on its own. This only helps if Docker itself starts on boot - on Linux,
+`sudo systemctl enable docker`; on Docker Desktop, enable "start on login" in
+settings.

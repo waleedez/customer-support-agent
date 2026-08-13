@@ -8,9 +8,18 @@
 # resources from an HTTPS page (browser mixed-content blocking). See
 # scripts/generate_self_signed_cert.sh to generate certs/server.{crt,key}
 # before starting this service - it will fail to start without them.
+#
+# Also sets restart: unless-stopped on every service, not just the proxy -
+# none of docker-compose.yml's generated services set a restart policy, so
+# without this the proxy would come back after a reboot pointed at nothing
+# (langgraph-api/redis/postgres would stay down). "unless-stopped" (rather
+# than "always") still respects an explicit `docker compose stop`.
+# This also requires Docker itself to start on boot (e.g. `systemctl enable
+# docker` on Linux, or Docker Desktop's "start on login" setting).
 services:
   reverse-proxy:
     image: nginx:alpine
+    restart: unless-stopped
     ports:
       - "443:443"
       - "80:80"
@@ -19,3 +28,12 @@ services:
       - ./certs:/etc/nginx/certs:ro
     depends_on:
       - langgraph-api
+
+  langgraph-api:
+    restart: unless-stopped
+
+  langgraph-redis:
+    restart: unless-stopped
+
+  langgraph-postgres:
+    restart: unless-stopped
