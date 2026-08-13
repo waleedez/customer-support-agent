@@ -6,4 +6,3 @@ venv/
 .pytest_cache/
 *.egg-info/
 .langgraph_api/
-certs/

@@ -149,29 +149,36 @@ plain HTTP: Studio is served over HTTPS, and browsers block an HTTPS page
 from fetching `http://` resources at all (mixed-content blocking) - no CORS
 header fixes that, the API itself has to speak HTTPS.
 
-`docker-compose.override.yml` adds an `nginx` reverse proxy in front of
-`langgraph-api` that terminates TLS with a self-signed certificate. It's a
-separate file from `docker-compose.yml` specifically so it survives
-regenerating the latter via `langgraph_cli`. To use it:
+`docker-compose.override.yml` adds a [Caddy](https://caddyserver.com) reverse
+proxy in front of `langgraph-api` (`Caddyfile` at the repo root configures
+it). Caddy obtains and auto-renews a real Let's Encrypt certificate for the
+domain in `Caddyfile` automatically - no self-signed-cert browser warning for
+anyone, unlike an earlier version of this setup that used a self-signed cert
+straight on the IP. `docker-compose.override.yml` is a separate file from
+`docker-compose.yml` specifically so it survives regenerating the latter via
+`langgraph_cli`.
+
+This currently points at `cs-agent.duckdns.org`, which resolves to
+`150.230.245.145`. To point it at a different domain, edit the site block in
+`Caddyfile` and re-run `docker compose up --build` - no other changes needed.
+
+Requirements for Let's Encrypt to succeed (this is real infra, not something
+`docker compose` can paper over):
+- The domain's DNS **must already resolve** to the host running this stack.
+- Ports **80 and 443 both** need to be reachable from the public internet -
+  80 for the ACME HTTP-01 challenge, not just 443 for serving traffic.
+- `caddy_data` (a named Docker volume) holds the issued cert and Let's
+  Encrypt account key - `docker compose down` is safe, but `docker compose
+  down -v` deletes it, forcing Caddy to re-request a cert on next `up` and
+  risking Let's Encrypt's rate limit (5 duplicate certs/week/domain).
 
 ```bash
-# On whichever host will actually serve traffic, using ITS public IP/hostname -
-# the cert's SAN must match what the browser connects to.
-./scripts/generate_self_signed_cert.sh <ip-or-hostname>
-
 docker compose up --build
 ```
 
-This publishes `443` (HTTPS, proxied to `langgraph-api:8000`) and `80`
-(redirects to `443`). Point Studio's `baseUrl` at `https://<ip-or-hostname>`.
-
-Self-signed means the browser won't trust it automatically - **visit
-`https://<ip-or-hostname>` directly once first and click through the
-warning**, or Studio's background fetches will fail silently with no console
-detail beyond a generic network error. This is a stopgap for
-testing/personal use; for anything longer-lived, put a real domain in front
-of it and use `nginx`/Caddy with a Let's Encrypt certificate instead (Let's
-Encrypt can't issue a browser-trusted cert for a bare IP).
+Point Studio's `baseUrl` at `https://cs-agent.duckdns.org` (or whatever
+domain `Caddyfile` names). No per-user browser workaround needed - the cert
+is real and trusted by default.
 
 Note: this repo's Docker/Compose tooling only runs where you invoke it -
 setting this up on a remote host means copying these files there and running

@@ -5,9 +5,17 @@
 #
 # Adds a TLS-terminating reverse proxy in front of langgraph-api, because
 # LangGraph Studio (https://smith.langchain.com) refuses to fetch plain HTTP
-# resources from an HTTPS page (browser mixed-content blocking). See
-# scripts/generate_self_signed_cert.sh to generate certs/server.{crt,key}
-# before starting this service - it will fail to start without them.
+# resources from an HTTPS page (browser mixed-content blocking). Caddy gets
+# a real Let's Encrypt certificate for cs-agent.duckdns.org automatically
+# (see Caddyfile) - no self-signed-cert browser warning for anyone. This
+# requires cs-agent.duckdns.org's DNS to point at this host, and ports 80
+# AND 443 reachable from the public internet (80 for the ACME HTTP-01
+# challenge, not just 443).
+#
+# caddy_data holds the issued certificate + Let's Encrypt account key - it
+# MUST persist across restarts (`docker compose down`, not `down -v`), or
+# Caddy re-requests a cert on every restart and can hit Let's Encrypt's
+# rate limit (5 duplicate certs/week/domain).
 #
 # Also sets restart: unless-stopped on every service, not just the proxy -
 # none of docker-compose.yml's generated services set a restart policy, so
@@ -18,14 +26,15 @@
 # docker` on Linux, or Docker Desktop's "start on login" setting).
 services:
   reverse-proxy:
-    image: nginx:alpine
+    image: caddy:2-alpine
     restart: unless-stopped
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./certs:/etc/nginx/certs:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
       - langgraph-api
 
@@ -37,3 +46,7 @@ services:
 
   langgraph-postgres:
     restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
