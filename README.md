@@ -141,3 +141,38 @@ curl -i -X OPTIONS http://localhost:8123/assistants/search \
 
 If you're also calling the API from your own frontend (not Studio), add that
 origin to `allow_origins` too - it's a list.
+
+### HTTPS (required for Studio against a remote deployment)
+
+CORS alone isn't enough once this is deployed to a real host reachable over
+plain HTTP: Studio is served over HTTPS, and browsers block an HTTPS page
+from fetching `http://` resources at all (mixed-content blocking) - no CORS
+header fixes that, the API itself has to speak HTTPS.
+
+`docker-compose.override.yml` adds an `nginx` reverse proxy in front of
+`langgraph-api` that terminates TLS with a self-signed certificate. It's a
+separate file from `docker-compose.yml` specifically so it survives
+regenerating the latter via `langgraph_cli`. To use it:
+
+```bash
+# On whichever host will actually serve traffic, using ITS public IP/hostname -
+# the cert's SAN must match what the browser connects to.
+./scripts/generate_self_signed_cert.sh <ip-or-hostname>
+
+docker compose up --build
+```
+
+This publishes `443` (HTTPS, proxied to `langgraph-api:8000`) and `80`
+(redirects to `443`). Point Studio's `baseUrl` at `https://<ip-or-hostname>`.
+
+Self-signed means the browser won't trust it automatically - **visit
+`https://<ip-or-hostname>` directly once first and click through the
+warning**, or Studio's background fetches will fail silently with no console
+detail beyond a generic network error. This is a stopgap for
+testing/personal use; for anything longer-lived, put a real domain in front
+of it and use `nginx`/Caddy with a Let's Encrypt certificate instead (Let's
+Encrypt can't issue a browser-trusted cert for a bare IP).
+
+Note: this repo's Docker/Compose tooling only runs where you invoke it -
+setting this up on a remote host means copying these files there and running
+`docker compose` on that machine.
