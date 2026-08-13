@@ -5,5 +5,12 @@
   },
   "env": ".env",
   "python_version": "3.12",
-  "dockerfile_lines": ["EXPOSE 8000"]
+  "dockerfile_lines": ["EXPOSE 8000"],
+  "http": {
+    "cors": {
+      "allow_origins": ["https://smith.langchain.com"],
+      "allow_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+      "allow_headers": ["*"]
+    }
+  }
 }
