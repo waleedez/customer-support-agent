@@ -1,0 +1,32 @@
+[
+  {
+    "customer_id": "C123",
+    "name": "Jordan Lee",
+    "subscription": "Pro Monthly",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "C124",
+    "name": "Amara Chen",
+    "subscription": "Basic Monthly",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "C125",
+    "name": "Diego Ramirez",
+    "subscription": "Pro Annual",
+    "account_status": "past_due"
+  },
+  {
+    "customer_id": "C126",
+    "name": "Priya Nair",
+    "subscription": "Enterprise Monthly",
+    "account_status": "active"
+  },
+  {
+    "customer_id": "C127",
+    "name": "Sam Whitfield",
+    "subscription": "Basic Monthly",
+    "account_status": "cancelled"
+  }
+]

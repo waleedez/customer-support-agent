@@ -1,0 +1,27 @@
+[
+  {
+    "policy_id": "POL-001",
+    "category": "billing",
+    "policy_text": "Duplicate payments (same customer, same amount, charged within 3 days of each other) are eligible for an automatic refund of the duplicate charge."
+  },
+  {
+    "policy_id": "POL-002",
+    "category": "billing",
+    "policy_text": "Refunds of $100 or less may be issued automatically without human sign-off. Refunds greater than $100 always require human approval before being issued."
+  },
+  {
+    "policy_id": "POL-003",
+    "category": "account",
+    "policy_text": "Account cancellation requests always require human approval before being processed, regardless of account status."
+  },
+  {
+    "policy_id": "POL-004",
+    "category": "account",
+    "policy_text": "Customers may update account information (email, name, subscription tier) without approval, subject to identity verification via customer_id."
+  },
+  {
+    "policy_id": "POL-005",
+    "category": "general",
+    "policy_text": "Purely informational requests that do not change billing or account state (e.g. how-to questions) do not require any human approval."
+  }
+]

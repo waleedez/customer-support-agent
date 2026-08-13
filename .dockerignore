@@ -1,0 +1,42 @@
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore .env files and other environment files
+.env
+.env.*
+*.local
+
+# Ignore git-related files
+.git
+.gitignore
+
+# Ignore Docker-related files and configs
+.dockerignore
+docker-compose.yml
+
+# Ignore build and cache directories
+dist
+build
+.cache
+__pycache__
+*.pyc
+
+# Ignore IDE and editor configurations
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# Ignore test files
+tests
+
+# This repo's own local-only state - not needed in the image
+.venv
+venv
+.pytest_cache
+.langgraph_api
+*.egg-info
+AI Agent Use Case Plan.pdf

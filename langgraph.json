@@ -1,0 +1,9 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "support_agent": "./app/graph/support_graph.py:graph"
+  },
+  "env": ".env",
+  "python_version": "3.12",
+  "dockerfile_lines": ["EXPOSE 8000"]
+}

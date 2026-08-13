@@ -1,0 +1,51 @@
+[
+  {
+    "payment_id": "P455",
+    "customer_id": "C123",
+    "amount": 49.99,
+    "date": "2026-07-01",
+    "status": "succeeded"
+  },
+  {
+    "payment_id": "P456",
+    "customer_id": "C123",
+    "amount": 49.99,
+    "date": "2026-07-01",
+    "status": "succeeded"
+  },
+  {
+    "payment_id": "P789",
+    "customer_id": "C124",
+    "amount": 19.99,
+    "date": "2026-07-05",
+    "status": "succeeded"
+  },
+  {
+    "payment_id": "P900",
+    "customer_id": "C125",
+    "amount": 599.00,
+    "date": "2026-06-15",
+    "status": "failed"
+  },
+  {
+    "payment_id": "P901",
+    "customer_id": "C126",
+    "amount": 499.00,
+    "date": "2026-07-10",
+    "status": "succeeded"
+  },
+  {
+    "payment_id": "P902",
+    "customer_id": "C126",
+    "amount": 499.00,
+    "date": "2026-07-10",
+    "status": "succeeded"
+  },
+  {
+    "payment_id": "P903",
+    "customer_id": "C127",
+    "amount": 19.99,
+    "date": "2026-05-20",
+    "status": "succeeded"
+  }
+]

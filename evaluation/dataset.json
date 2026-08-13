@@ -1,0 +1,130 @@
+[
+  {
+    "ticket_id": "2001",
+    "customer_id": "C123",
+    "message": "I was charged twice for my subscription this month. Please refund the duplicate charge.",
+    "expected_category": "billing",
+    "expected_resolution_type": "refund",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2002",
+    "customer_id": "C126",
+    "message": "I noticed two charges of $499 on my account for the same day. Please refund one of them.",
+    "expected_category": "billing",
+    "expected_resolution_type": "refund",
+    "expected_requires_human_approval": true
+  },
+  {
+    "ticket_id": "2003",
+    "customer_id": "C124",
+    "message": "I forgot my password and can't log in.",
+    "expected_category": "account",
+    "expected_resolution_type": "information",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2004",
+    "customer_id": "C125",
+    "message": "My subscription shows as inactive but I'm still being charged.",
+    "expected_category": "account",
+    "expected_resolution_type": "escalation",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2005",
+    "customer_id": "C127",
+    "message": "Please cancel my subscription immediately.",
+    "expected_category": "account",
+    "expected_resolution_type": "cancellation",
+    "expected_requires_human_approval": true
+  },
+  {
+    "ticket_id": "2006",
+    "customer_id": "C124",
+    "message": "How do I change my email address on file?",
+    "expected_category": "account",
+    "expected_resolution_type": "information",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2007",
+    "customer_id": "C123",
+    "message": "What's included in the Pro Monthly plan?",
+    "expected_category": "general",
+    "expected_resolution_type": "information",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2008",
+    "customer_id": "C126",
+    "message": "I want to cancel my Enterprise subscription.",
+    "expected_category": "account",
+    "expected_resolution_type": "cancellation",
+    "expected_requires_human_approval": true
+  },
+  {
+    "ticket_id": "2009",
+    "customer_id": "C125",
+    "message": "My last payment failed, can you help me retry it?",
+    "expected_category": "billing",
+    "expected_resolution_type": "escalation",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2010",
+    "customer_id": "C124",
+    "message": "I think I was double charged but I only see one $19.99 payment, can you check?",
+    "expected_category": "billing",
+    "expected_resolution_type": "no_action",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2011",
+    "customer_id": "C123",
+    "message": "I'm not happy with the service this month, can I get a partial refund even though nothing was wrong with billing?",
+    "expected_category": "billing",
+    "expected_resolution_type": "escalation",
+    "expected_requires_human_approval": true
+  },
+  {
+    "ticket_id": "2012",
+    "customer_id": "C127",
+    "message": "My account says cancelled but I never asked for that, can you look into it?",
+    "expected_category": "account",
+    "expected_resolution_type": "escalation",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2013",
+    "customer_id": "C126",
+    "message": "Can you confirm my subscription is Enterprise Monthly?",
+    "expected_category": "account",
+    "expected_resolution_type": "information",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2014",
+    "customer_id": "C125",
+    "message": "I'm past due, what happens if I don't pay?",
+    "expected_category": "billing",
+    "expected_resolution_type": "information",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2015",
+    "customer_id": "C123",
+    "message": "Please refund payment P456, it's a duplicate of P455.",
+    "expected_category": "billing",
+    "expected_resolution_type": "refund",
+    "expected_requires_human_approval": false
+  },
+  {
+    "ticket_id": "2016",
+    "customer_id": "C126",
+    "message": "I'd like to downgrade my Enterprise plan to Basic.",
+    "expected_category": "account",
+    "expected_resolution_type": "account_update",
+    "expected_requires_human_approval": false
+  }
+]

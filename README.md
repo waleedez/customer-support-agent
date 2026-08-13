@@ -1,0 +1,123 @@
+# Customer Support Ticket Triage & Resolution Agent
+
+A small LangGraph agentic workflow for a fictional SaaS company, **AcmeCloud**,
+built as a learning project covering tools, multi-agent orchestration, parallel
+execution, reflection, and human-in-the-loop approval. See
+`AI Agent Use Case Plan.pdf` for the original design brief this implements.
+
+## Architecture
+
+```
+START -> Ticket Analyzer -> Billing Agent   -\
+                          -> Account Agent   -+-> Policy Agent -> Resolution Agent
+                                                                        |
+                                                                        v
+                                                                 Reflection Agent
+                                                          (loops back on rejection,
+                                                           max 2 cycles)
+                                                                        |
+                                          requires approval? -- no --> Summarizer -> END
+                                                    |
+                                                   yes
+                                                    v
+                                              Human Review
+                              (approve / reject / request more investigation;
+                               "more investigation" re-runs Billing + Account,
+                               max 1 extra round)
+                                                    |
+                                                    v
+                                               Summarizer -> END
+```
+
+- **Investigation vs. decision**: the Billing/Account agents only investigate;
+  the Policy Agent decides what's *allowed*; the Resolution Agent decides what
+  action to *take*.
+- **Reasoning state vs. customer-facing output**: the Summarizer never
+  investigates or decides - it only renders the already-decided resolution.
+- Business rules (see `app/data/policies.json`): duplicate payments are
+  auto-refund eligible; refunds over `AUTO_REFUND_THRESHOLD` (default $100) and
+  account cancellations always require human approval.
+
+## Setup
+
+```bash
+python -m venv .venv
+.venv/Scripts/activate   # or `source .venv/bin/activate` on macOS/Linux
+pip install -r requirements.txt
+```
+
+Copy `.env.example` to `.env` and fill in your provider's credentials:
+
+```
+OPENAI_API_KEY=...
+# Optional: point at any OpenAI-compatible endpoint (Groq, a local Ollama/vLLM
+# server, etc.) instead of api.openai.com.
+OPENAI_BASE_URL=
+OPENAI_MODEL=gpt-4o-mini
+
+# Optional LangSmith tracing
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=...
+LANGCHAIN_PROJECT=customer-support-agent
+```
+
+## Running
+
+```bash
+python -m app.main "I was charged twice for my subscription, please refund the extra charge."
+```
+
+The graph pauses on `human_review` whenever the proposed resolution requires
+approval (refund > $100, or any cancellation) and prompts on the CLI for
+`approve` / `reject` / `request_more_investigation`.
+
+## Tests
+
+```bash
+pytest
+```
+
+Tool tests run against the local JSON fixtures with no network access. Agent
+and graph tests use a fake chat model (see `tests/test_agents.py`) so the suite
+never calls a real LLM provider or needs an API key.
+
+## Evaluation
+
+```bash
+python -m evaluation.evaluate
+```
+
+Runs the ~15-ticket dataset in `evaluation/dataset.json` end-to-end through the
+graph and scores classification accuracy, resolution correctness, and policy
+compliance (approval routing) against the expected labels. Requires a
+configured LLM provider (see Setup) since it exercises the real graph.
+
+## LangGraph CLI / deployment
+
+`langgraph.json` declares the graph for the LangGraph CLI and Platform (Studio,
+API server). The package lives under `app/`, not `src/` - `src` is reserved by
+`langgraph-cli` and building a deployment image fails if the project uses it.
+
+```bash
+# Local dev server with hot reload + Studio UI
+langgraph dev
+
+# Regenerate Dockerfile/.dockerignore/docker-compose.yml after changing langgraph.json
+python -m langgraph_cli dockerfile --add-docker-compose -c langgraph.json Dockerfile
+
+# Build and run the full stack (requires Docker)
+docker compose up --build
+```
+
+The LangGraph API server is **not** a standalone container - it requires Redis
+(pub/sub) and Postgres (persistence) alongside it, which is exactly what
+`docker-compose.yml` wires up (`langgraph-redis`, `langgraph-postgres`,
+`langgraph-api`, with `REDIS_URI`/`POSTGRES_URI` pointed at the sidecar
+containers). Running `docker run` on the built image alone will fail with
+`KeyError: "Config 'REDIS_URI' is missing..."` - use `docker compose up`, not
+a bare `docker run`. Once it's up, the API listens on `http://localhost:8123`
+(host `8123` -> container `8000`; verify with `curl http://localhost:8123/ok`).
+
+`Dockerfile`, `.dockerignore`, and `docker-compose.yml` are generated by
+`langgraph_cli`, not hand-written - regenerate rather than hand-edit them
+after a `langgraph.json` change.
