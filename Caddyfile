@@ -1,4 +1,4 @@
-cs-agent.duckdns.org {
+cs-agent.duckdns.org, 150.230.245.145 {
 	reverse_proxy langgraph-api:8000 {
 		# LangGraph Studio streams run output via SSE - without this, Caddy may
 		# batch chunks instead of forwarding them as they arrive.
